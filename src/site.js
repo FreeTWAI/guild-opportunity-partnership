@@ -3,13 +3,14 @@
   const protocol = 'freedom.guild-launchpad/v1';
   const actions = ['work', 'skills', 'tools', 'information'];
   const embedded = window.parent !== window;
+  const mainElement = document.querySelector('main');
   let connection = null;
   let lastHeight = 0;
   function send(message) {
     if (connection) window.parent.postMessage({protocol, channel: connection.channel, guildKey: workspace.guild_key, ...message}, connection.origin);
   }
   function resize() {
-    const height = Math.max(240, Math.min(1600, Math.ceil(document.querySelector('main').getBoundingClientRect().height + 32)));
+    const height = Math.max(240, Math.min(1600, Math.ceil(mainElement.getBoundingClientRect().height + 32)));
     if (height !== lastHeight) {lastHeight = height; send({type: 'resize', height});}
   }
   if (embedded) {
@@ -38,7 +39,7 @@
       event.preventDefault();
       if (event.isTrusted && connection?.actions.includes(link.dataset.action)) send({type: 'navigate', action: link.dataset.action});
     });
-    new ResizeObserver(resize).observe(document.querySelector('main'));
+    new ResizeObserver(resize).observe(mainElement);
   }
   document.querySelector('#release').textContent = `版本 ${sourceSha.slice(0, 8)}`;
 })();
